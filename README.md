@@ -21,7 +21,7 @@ Clone the repo and install the following dependencies - boto3, pandas and openpy
 
 **Required Configuration** <br>
 REGION = "us-east-1" --not really needed <br>
-LIST_ACCOUNTS_X_ROLE = "list-accounts-role" //role in the management account to get accout list <br>
-READ_ONLY_X_ROLE = "read-only-role" // read-only role deployed in member accounts (child accounts) <br>
+LIST_ACCOUNTS_X_ROLE = "list-accounts-role" //role in the management account to get accout list with trust relationship to your Infra or some other account <br>
+READ_ONLY_X_ROLE = "read-only-role" // read-only role deployed in member accounts (child accounts) with trust relationship to your Infra or some other account<br>
 MANAGEMENT_ACCOUNT_ID = "000000000000" // Account number of management account <br>
 ROLE_SESSION_NAME = "cross-account-role-audit" //role session name <br>
