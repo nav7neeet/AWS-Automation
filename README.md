@@ -7,7 +7,7 @@ _cross-account-role-details.py_ script helps automate the process to fetch IAM r
 **Sample Output** <br>
 
 Account ID  |	Account Name | Role Name | Policy | Trust Relationship | X Access
------------ |----------------|-----------|--------|-------------------
+----------- |----------------|-----------|--------|-------------------|---------------------
 *********266|    Dev         |     role1 |['policy1'] | [{'Effect': 'Allow', 'Principal': {'AWS': 'arn:aws:iam::*********371:root'}, 'Action': 'sts:AssumeRole', 'Condition': {}}] | ['arn:aws:iam::*********294:root']
 *********371|    Test         |     role2 |['policy2, policy5'] | [{'Effect': 'Allow', 'Principal': {'AWS': 'arn:aws:iam::*********257:root'}, 'Action': 'sts:AssumeRole', 'Condition': {}}] | ['arn:aws:iam::*********372:root']
 *********468|    QA         |     role3 |['policy3'] | [{'Effect': 'Allow', 'Principal': {'AWS': 'arn:aws:iam::*********862:root'}, 'Action': 'sts:AssumeRole', 'Condition': {}}] | ['arn:aws:iam::*********294:root']
