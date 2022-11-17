@@ -12,14 +12,18 @@ Account ID  |	Account Name | Role Name | Policy | Trust Relationship | X Access
 *********468|    QA         |     role3 |['policy3'] | [{'Effect': 'Allow', 'Principal': {'AWS': 'arn:aws:iam::*********862:root'}, 'Action': 'sts:AssumeRole', 'Condition': {}}] | ['arn:aws:iam::*********294:root']
 
 <br>
-**Prerequisites** <br>
+
+**Prerequisites**<br>
 1. MNGMT_ACCNT_ROLE<br>
 Create a role with appropriate policy in all the member accounts. This role should have trust relationship with the Security Tooling account or some other account which is used to run the python script. The script assumes this role to get all the list of member accounts present in the organization.<br>
 2. MEMBER_ACCNT_ROLE<br>
 Create a role with appropriate policy in all the member accounts. This role should have trust relationship with the Security Tooling account or some other account which is used to run the python script. The script assumes this role to get the role details.<br>
 
-**Installation** <br>
-Clone the repo and install the following dependencies - boto3, pandas and openpyxl <br>
+**Installation**<br>
+Clone the repo and install the following dependencies<br>
+- boto3
+- pandas
+- openpyxl <br>
 
 **Required Configuration** <br>
 MNGMT_ACCNT_ID = "000000000000" --Account number of the management account. <br><br>
