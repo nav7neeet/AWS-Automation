@@ -18,7 +18,7 @@ Account ID  |	Account Name | Role Name | Policy | Trust Relationship | X Access
 Clone the repo and install the following dependencies - boto3, pandas and openpyxl
 
 **Required Configuration** <br>
-MANAGEMENT_ORG_ROLE = "list-accounts-role" --role in the management account to get accout list with trust relationship to your Infra or some other account <br>
-READ_ONLY_ROLE = "read-only-role" -- read-only role deployed in member accounts (child accounts) with trust relationship to your Infra or some other account <br>
-MANAGEMENT_ACCOUNT_ID = "000000000000" -- Account number of management account <br>
-ROLE_SESSION_NAME = "cross-account-role-audit" --role session name <br>
+MNGMT_ACCNT_ID = "000000000000" --Account number of the management account. <br><br>
+MNGMT_ACCNT_ROLE = "list-accounts-role" --Role in the management account to get AWS account list. It should have trust relationship to the Security-Tooling or some other account from where we are running our python script.<br><br>
+MEMBER_ACCNT_ROLE = "read-only-role" --Role deployed in all the member accounts (child accounts) with trust relationship to the Security-Tooling or some other account from where we are running our python script. <br><br>
+ROLE_SESSION_NAME = "cross-account-role-audit" --role session name<br>
