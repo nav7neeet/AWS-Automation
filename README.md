@@ -14,7 +14,7 @@ Account ID  |	Account Name | Role Name | Policy | Trust Relationship | X Access
 
 **Prerequisites**<br>
 1. MNGMT_ACCNT_ROLE<br>
-Create a role with appropriate policy in all the member accounts. This role should have trust relationship with the Security Tooling account or some other account which is used to run the python script. The script assumes this role to get all the list of member accounts present in the organization.<br>
+Create a role with appropriate policy in the management account. This role should have trust relationship with the Security Tooling account or some other account which is used to run the python script. The script assumes this role to get all the list of member accounts present in the organization.<br>
 2. MEMBER_ACCNT_ROLE<br>
 Create a role (using StackSet) with appropriate policy in all the member accounts. This role should have trust relationship with the Security Tooling account or some other account which is used to run the python script. The script assumes this role to get the role details.<br><br>
 
