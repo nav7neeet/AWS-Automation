@@ -1,6 +1,5 @@
 # Cross Account Role Audit
 
-
 **About** <br>
 _cross-accnt-role-audit.py_ script gives visibility into all the roles which have cross account access. It generates an excel file as output which has role details for all the AWS accounts present in the organization. The script first assumes a role in the management account to get the list of AWS accounts. It then assumes a role in each member account one by one and lists out all the roles present in the account along with the policies attached to the role, trust relationship, cross account access details etc.
 
@@ -17,13 +16,13 @@ Account ID  |	Account Name | Role Name | Policy | Trust Relationship | X Access
 1. MNGMT_ACCNT_ROLE<br>
 Create a role with appropriate policy in all the member accounts. This role should have trust relationship with the Security Tooling account or some other account which is used to run the python script. The script assumes this role to get all the list of member accounts present in the organization.<br>
 2. MEMBER_ACCNT_ROLE<br>
-Create a role (using StackSet) with appropriate policy in all the member accounts. This role should have trust relationship with the Security Tooling account or some other account which is used to run the python script. The script assumes this role to get the role details.<br>
+Create a role (using StackSet) with appropriate policy in all the member accounts. This role should have trust relationship with the Security Tooling account or some other account which is used to run the python script. The script assumes this role to get the role details.<br><br>
 
 **Installation**<br>
 Clone the repo and install the following dependencies<br>
 - boto3
 - pandas
-- openpyxl <br>
+- openpyxl <br><br>
 
 **Required Configuration** <br>
 Update the following variables in the python file before running the script.
