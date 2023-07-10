@@ -1,10 +1,9 @@
 import logging
-import time
 import boto3
 from botocore.exceptions import ClientError
 import pandas
 
-MNGMT_ACCNT_ID = "975300453774"
+MNGMT_ACCNT_ID = "000000000000"
 MNGMT_ACCNT_ROLE = "list-accounts-role"
 MEMBER_ACCNT_ROLE = "read-only-role"
 ROLE_SESSION_NAME = "cross-account-role-audit"
@@ -168,6 +167,4 @@ def main():
 
 
 if __name__ == "__main__":
-    start = time.time()
     main()
-    print("Time:", time.time() - start)
