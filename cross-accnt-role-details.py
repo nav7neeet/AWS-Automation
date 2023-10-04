@@ -4,7 +4,7 @@ import boto3
 from botocore.exceptions import ClientError
 import pandas
 
-MNGMT_ACCNT_ID = "975300453774"
+MNGMT_ACCNT_ID = "000000000000"
 MNGMT_ACCNT_ROLE = "list-accounts-role"
 MEMBER_ACCNT_ROLE = "read-only-role"
 ROLE_SESSION_NAME = "cross-account-role-audit"
@@ -134,7 +134,7 @@ def create_table(data_frame, role_details, accnt_id, accnt_name):
 
 
 def write_to_excel(table):
-    file_name = "cross-accnt-role-audit.xlsx"
+    file_name = "report.xlsx"
     table.to_excel(file_name)
 
 
@@ -148,6 +148,7 @@ def main():
         data_frame = get_data_frame()
 
         for accnt in accnt_list:
+            print(f'Processing AWS Account: {accnt["id"]}')
             role_arn = get_role_arn(accnt["id"], MEMBER_ACCNT_ROLE)
             try:
                 resource = get_resource(role_arn, "iam")
@@ -159,7 +160,8 @@ def main():
                             data_frame, role_details, accnt["id"], accnt["name"]
                         )
             except Exception as error:
-                logger.error(f"Failed to assume role: {role_arn} " + str(error))
+                print("")
+                # logger.error(f"Failed to assume role: {role_arn} " + str(error))
         write_to_excel(data_frame)
 
     except ClientError as error:

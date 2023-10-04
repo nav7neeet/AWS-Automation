@@ -3,9 +3,9 @@ import time
 import boto3
 from botocore.exceptions import ClientError
 import pandas
-import concurrent.futures
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
-MNGMT_ACCNT_ID = "975300453774"
+MNGMT_ACCNT_ID = "000000000000"
 MNGMT_ACCNT_ROLE = "list-accounts-role"
 MEMBER_ACCNT_ROLE = "read-only-role"
 ROLE_SESSION_NAME = "cross-account-role-audit"
@@ -30,18 +30,18 @@ def assume_role_mngmt_accnt(role_arn, service_name):
     return client
 
 
-def assume_role_member_accnt(role_arn, service_name):
+def assume_role_member_accnt(role_arn, accnt_id):
     client = boto3.client("sts")
     response = client.assume_role(RoleArn=role_arn, RoleSessionName=ROLE_SESSION_NAME)
     temp_creds = response["Credentials"]
 
     resource = boto3.resource(
-        service_name,
+        "iam",
         aws_access_key_id=temp_creds["AccessKeyId"],
         aws_secret_access_key=temp_creds["SecretAccessKey"],
         aws_session_token=temp_creds["SessionToken"],
     )
-    return resource
+    return [accnt_id, resource]
 
 
 def get_accnt_list(organizations):
@@ -57,15 +57,14 @@ def get_accnt_list(organizations):
     return accnt_list
 
 
-def get_roles_list(iam, tag):
+def get_roles_list(iam, accnt_id):
     roles_list = []
     for role in iam.roles.all():
         roles_list.append(role)
-    # return {tag: roles_list}
-    return [tag, roles_list]
+    return [accnt_id, roles_list]
 
 
-def get_role_details(role, tag):
+def get_role_details(role, accnt_id):
     role_details = {}
     role_details["name"] = role.name
     role_details["trust_relationship"] = role.assume_role_policy_document["Statement"]
@@ -93,7 +92,7 @@ def get_role_details(role, tag):
     role_details["X_access_list"] = X_access_list
 
     if X_access:
-        return [tag, role_details]
+        return [accnt_id, role_details]
 
 
 def write_to_excel(data):
@@ -116,39 +115,46 @@ def write_to_excel(data):
 def main():
     try:
         role_arn = f"arn:aws:iam::{MNGMT_ACCNT_ID}:role/{MNGMT_ACCNT_ROLE}"
-        # logger.info(role_arn)
         organizations = assume_role_mngmt_accnt(role_arn, "organizations")
         accnt_list = get_accnt_list(organizations)
-        # logger.info(accnt_list)
 
-        executor = concurrent.futures.ThreadPoolExecutor()
-        task1 = []
-        task2 = []
-        data = []
-        start = time.time()
-        for accnt in accnt_list:
-            try:
+        with ThreadPoolExecutor() as executor:
+            task0 = []
+            task1 = []
+            task2 = []
+            data = []
+
+            for accnt in accnt_list:
                 role_arn = f"arn:aws:iam::{accnt['id']}:role/{MEMBER_ACCNT_ROLE}"
-                iam = assume_role_member_accnt(role_arn, "iam")
-                thread = executor.submit(get_roles_list, iam, accnt["id"])
-                task1.append(thread)
-            except Exception as error:
-                logger.error(f"Failed to assume role: {role_arn} " + str(error))
-        print(f"*****1st for loop time - {time.time() - start}")
-        for task in concurrent.futures.as_completed(task1):
-            for role in task.result()[1]:
-                thread = executor.submit(get_role_details, role, task.result()[0])
-                task2.append(thread)
-        start = time.time()
-        for task in concurrent.futures.as_completed(task2):
-            if task.result():
-                data.append(task.result())
-        print(f"*****3rd for loop time - {time.time() - start}")
+                thread = executor.submit(
+                    assume_role_member_accnt, role_arn, accnt["id"]
+                )
+                task0.append(thread)
 
-        write_to_excel(data)
+            for task in as_completed(task0):
+                try:
+                    accnt_id = task.result()[0]
+                    iam_client = task.result()[1]
+                    thread = executor.submit(get_roles_list, iam_client, accnt_id)
+                    task1.append(thread)
+                except Exception as error:
+                    logger.error(f"\nFailed to assume role: {role_arn}\n{str(error)}")
+
+            for task in as_completed(task1):
+                accnt_id = task.result()[0]
+                roles = task.result()[1]
+                for role in roles:
+                    thread = executor.submit(get_role_details, role, accnt_id)
+                    task2.append(thread)
+
+            for task in as_completed(task2):
+                if task.result():
+                    data.append(task.result())
+
+            write_to_excel(data)
 
     except ClientError as error:
-        logger.error(f"Failed to assume role: {role_arn} " + str(error))
+        logger.error(f"\nFailed to assume role: {role_arn}\n{str(error)}")
         quit()
 
 
